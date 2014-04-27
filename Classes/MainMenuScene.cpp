@@ -1,11 +1,3 @@
-//
-//  MainMenuScene.cpp
-//  Moon3d
-//
-//  Created by Rye on 14-3-12.
-//
-//
-
 #include "MainMenuScene.h"
 #include "LoadingScene.h"
 #include "PublicApi.h"
@@ -15,28 +7,18 @@
 #include "LicenseLayer.h"
 USING_NS_CC;
 
-Scene* MainMenuScene::createScene()
-{
-    // 'scene' is an autorelease object
+Scene* MainMenuScene::createScene() {
     auto scene = Scene::create();
-    
-    // 'layer' is an autorelease object
     auto layer = MainMenuScene::create();
-    
-    // add layer as a child to scene
     scene->addChild(layer);
     
-    // return the scene
     return scene;
 }
 
-// on "init" you need to initialize your instance
-bool MainMenuScene::init()
-{
-    if ( !Layer::init() )
-    {
+bool MainMenuScene::init() {
+    if (!Layer::init())
         return false;
-    }
+    
     // Music By Matthew Pable (http://www.matthewpablo.com/)
     // Licensed under CC-BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
     CocosDenshion::SimpleAudioEngine::getInstance()->playBackgroundMusic("Star_Chaser.mp3", true);
@@ -83,66 +65,61 @@ bool MainMenuScene::init()
     emis->setPositionType(tPositionType::GROUPED);
     emis->setRotation(180);
     plane->addChild(emis, -2);
-
     
     //************ adds vanishing ****************
-    auto fileUtil = FileUtils::getInstance();
-    auto plistData = fileUtil->getValueMapFromFile("vanishingPoint.plist");
-    //auto sf = SpriteFrame::create("bullets.png", Rect(5,8,24,32));
-    auto vanishing = ParticleSystemQuad::create(plistData);
-    vanishing->setAnchorPoint(Point(0.5f,0.5f));
-    vanishing->setPosition(visible_size_macro.width-90,visible_size_macro.height/2 +50);
-    this->addChild(vanishing,1,1);
+    auto vanishing = ParticleSystemQuad::create("vanishingPoint.plist");
+    vanishing->setAnchorPoint(Point(0.5f, 0.5f));
+    vanishing->setPosition(visible_size_macro.width - 90, visible_size_macro.height / 2 + 50);
+    this->addChild(vanishing, 1, 1);
     
     //************* adds background ***********
     auto background = Sprite::createWithSpriteFrameName("mainmenu_BG.png");
-    background->setAnchorPoint(Point(0,0));
-    this->addChild(background,-1,-1);
+    background->setAnchorPoint(Point(0, 0));
+    this->addChild(background, -1, -1);
     
     //************* adds start game ***********
-    auto start_normal=Sprite::createWithSpriteFrameName("start_game.png");
-    auto start_pressed=Sprite::createWithSpriteFrameName("start_game.png");
+    auto start_normal = Sprite::createWithSpriteFrameName("start_game.png");
+    auto start_pressed = Sprite::createWithSpriteFrameName("start_game.png");
     startgame_item = MenuItemSprite::create(start_normal, start_pressed, CC_CALLBACK_1(MainMenuScene::startgame, this));
-    startgame_item->setPosition(visibleSize.width/2,200);
+    startgame_item->setPosition(visibleSize.width / 2, 200);
     startgame_item->setScale(1.3);
     
     //************* license *******************
-    auto license_normal=Sprite::createWithSpriteFrameName("license.png");
-    auto license_pressed=Sprite::createWithSpriteFrameName("license.png");
+    auto license_normal = Sprite::createWithSpriteFrameName("license.png");
+    auto license_pressed = Sprite::createWithSpriteFrameName("license.png");
     license_item = MenuItemSprite::create(license_normal, license_pressed, CC_CALLBACK_1(MainMenuScene::license, this));
-    license_item->setPosition(visibleSize.width/2-200,100);
+    license_item->setPosition(visibleSize.width / 2 - 200, 100);
     license_item->setScale(0.7);
 
     //************* credits ******************
-    auto credits_normal=Sprite::createWithSpriteFrameName("credits.png");
-    auto credits_pressed=Sprite::createWithSpriteFrameName("credits.png");
+    auto credits_normal = Sprite::createWithSpriteFrameName("credits.png");
+    auto credits_pressed = Sprite::createWithSpriteFrameName("credits.png");
     credits_item = MenuItemSprite::create(credits_normal, credits_pressed, CC_CALLBACK_1(MainMenuScene::credits, this));
-    credits_item->setPosition(visibleSize.width/2+200,100);
+    credits_item->setPosition(visibleSize.width / 2 + 200, 100);
     credits_item->setScale(0.7);
 
     //************* Menu ******************
-    auto menu = Menu::create(startgame_item,license_item,credits_item, NULL);
+    auto menu = Menu::create(startgame_item, license_item, credits_item, NULL);
     menu->setPosition(origin);
-    this->addChild(menu,3);
+    this->addChild(menu, 3);
     
     return true;
 }
 
-void MainMenuScene::update(float dt){
-    pRate+=0.01;
-    plane->setPosition3D(Vertex3F(visible_size_macro.width/2+50,480-20*sin(1.05*pRate),0));
+void MainMenuScene::update(float dt) {
+    pRate += 0.01;
+    plane->setPosition3D(Vertex3F(visible_size_macro.width / 2 + 50, 480 - 20 * sin(1.05 * pRate), 0));
 }
 
-void MainMenuScene::startgame(Ref* sender)
-{
+void MainMenuScene::startgame(Ref* sender) {
     startgame_item->runAction(Sequence::create(ScaleTo::create(0.1f, 1.4f),
-                                                ScaleTo::create(0.1f, 1.2f),
-                                                ScaleTo::create(0.1f, 1.3f),
-                                               CallFunc::create(CC_CALLBACK_0(MainMenuScene::startgame_callback,this)),NULL));
+                                               ScaleTo::create(0.1f, 1.2f),
+                                               ScaleTo::create(0.1f, 1.3f),
+                                               CallFunc::create(CC_CALLBACK_0(MainMenuScene::startgame_callback, this)),
+                                               NULL));
 }
 
-void MainMenuScene::startgame_callback()
-{
+void MainMenuScene::startgame_callback() {
     CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     GameLayer::isDie=false;
     auto scene = (LoadingScene::audioloaded) ? HelloWorld::createScene() :LoadingScene::createScene();
@@ -151,14 +128,14 @@ void MainMenuScene::startgame_callback()
 
 void MainMenuScene::credits(Ref* sender){
     credits_item->runAction(Sequence::create(ScaleTo::create(0.1f, 0.8f),
-                                               ScaleTo::create(0.1f, 0.6f),
-                                               ScaleTo::create(0.1f, 0.7f),
-                                             CallFunc::create(CC_CALLBACK_0(MainMenuScene::credits_callback, this)),NULL));
+                                             ScaleTo::create(0.1f, 0.6f),
+                                             ScaleTo::create(0.1f, 0.7f),
+                                             CallFunc::create(CC_CALLBACK_0(MainMenuScene::credits_callback, this)),
+                                             NULL));
 }
 
-void MainMenuScene::credits_callback()
-{
-    auto license =LicenseLayer::create("credits_03.png");
+void MainMenuScene::credits_callback() {
+    auto license = LicenseLayer::create("credits_03.png");
     license->setAnchorPoint(Point(0.5f,0.5f));
     license->setPosition(Point(visible_size_macro.width/2, visible_size_macro.height/2));
     addChild(license,20);
@@ -170,16 +147,16 @@ void MainMenuScene::credits_callback()
 
 void MainMenuScene::license(Ref* sender){
     license_item->runAction(Sequence::create(ScaleTo::create(0.1f, 0.8f),
-                                               ScaleTo::create(0.1f, 0.6f),
-                                               ScaleTo::create(0.1f, 0.7f),
-                                             CallFunc::create(CC_CALLBACK_0(MainMenuScene::license_callback, this)),NULL));
+                                             ScaleTo::create(0.1f, 0.6f),
+                                             ScaleTo::create(0.1f, 0.7f),
+                                             CallFunc::create(CC_CALLBACK_0(MainMenuScene::license_callback, this)),
+                                             NULL));
 }
 
-void MainMenuScene::license_callback()
-{
+void MainMenuScene::license_callback() {
     auto license =LicenseLayer::create("LICENSE_03.png");
     license->setAnchorPoint(Point(0.5f,0.5f));
-    license->setPosition(Point(visible_size_macro.width/2, visible_size_macro.height/2));
+    license->setPosition(Point(visible_size_macro.width / 2, visible_size_macro.height / 2));
     addChild(license,20);
     license->runAction(Sequence::create(ScaleTo::create(0.2f, 1.1f),
                                         ScaleTo::create(0.1f, 0.9f),
